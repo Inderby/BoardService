@@ -25,8 +25,7 @@ import java.util.Set;
         @Index(columnList = "createdBy")
 })
 @Entity
-@EntityListeners(AuditingEntityListener.class) // 해당 어노테이션을 사용함으로써 entity에 대해서도 auditing 기능을 사용할 수 있게 된다.
-public class Article {
+public class Article extends AuditingFields{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)//MySQL의 auto increment는 identity 방식이다.
     private Long id;
@@ -40,12 +39,6 @@ public class Article {
     @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)//mappedBy를 사용하지 않으면 기본 이름을 사용하게 된다(기본 이름 : article_articleComment)
     @ToString.Exclude //ToString 대상에서 제외 처리를 해주지 않는다면 성능 이슈 뿐만 아니라 순환참조가 발생할 수 있기 때문에 이를 방지하기 위해 필수
     private final Set<ArticleComment> articleComments = new LinkedHashSet<>();
-
-
-    @CreatedDate @Column(nullable = false) private LocalDateTime createdAt; //생성일시
-    @CreatedBy @Column(length = 100, nullable = false) private String createdBy; //생성자
-    @LastModifiedDate @Column(nullable = false) private LocalDateTime modifiedAt; //수정일시
-    @LastModifiedBy @Column(length = 100, nullable = false) private String modifiedBy; //수정자
 
     protected Article() {} //Hibernate 구현체를 사용하는 경우 기본 생성자를 갖고 있어야한다. 최소 protected부터 가능하다
 
