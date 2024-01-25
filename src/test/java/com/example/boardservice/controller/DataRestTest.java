@@ -1,5 +1,6 @@
 package com.example.boardservice.controller;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 //@WebMvcTest //내부적으로 Mock MVC를 사용할 수 있게 해주는 어노테이션
+@Disabled("Spring Data REST 통합 테스트는 불필요하므로 제외시킴")
 @DisplayName("Data REST - api 테스트")
 @Transactional // test에서 동작하는 transactional의 동작은 기본이 rollback이기 때문에 db에 영향을 주지 않는 테스트로 설정해줄 수 있다.
 @AutoConfigureMockMvc //MockMvc를 사용하기 위한 어노테이션 설정
