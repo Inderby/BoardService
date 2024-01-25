@@ -13,6 +13,7 @@ spring:
     password: aksen8253?
     driverClassName: com.mysql.cj.jdbc.Driver
   jpa:
+    database: mysql
     defer-datasource-initialization: true #data.sql을 이용해 초기 데이터를 받아올 것인지에 대한 설정
     hibernate.ddl-auto: create # entity를 보고 database schema를 알아서 만들어줄 것인지에 대한 설정
     #open-in-view: false
