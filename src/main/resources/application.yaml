@@ -25,7 +25,8 @@ spring:
   data.rest:
     base-path: /api
     detection-strategy: annotated #repository를 실제로 rest api로 노출 시킬 건지를 지정하는 전략
-
+  thymeleaf3:
+    decoupled-logic: true
 ---
 spring:
   config.activate.on-profile: testdb
