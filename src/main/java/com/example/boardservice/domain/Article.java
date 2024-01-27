@@ -40,6 +40,9 @@ public class Article extends AuditingFields{
     @ToString.Exclude //ToString 대상에서 제외 처리를 해주지 않는다면 성능 이슈 뿐만 아니라 순환참조가 발생할 수 있기 때문에 이를 방지하기 위해 필수
     private final Set<ArticleComment> articleComments = new LinkedHashSet<>();
 
+    @Setter @ManyToOne(optional = false)
+    private UserAccount userAccount; //유저 계정 id
+
     protected Article() {} //Hibernate 구현체를 사용하는 경우 기본 생성자를 갖고 있어야한다. 최소 protected부터 가능하다
 
     public Article(String title, String content, String hashtag) {
