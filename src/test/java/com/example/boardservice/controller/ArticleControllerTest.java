@@ -1,10 +1,12 @@
 package com.example.boardservice.controller;
 
+import com.example.boardservice.config.SecurityConfig;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -12,6 +14,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @DisplayName("View 컨트롤러 - 게시글")
+@Import(SecurityConfig.class)
 @WebMvcTest(ArticleController.class) //모든 controller 클래스를 불러올 필요 없이 해당 컨트롤러만 불러옴
 class ArticleControllerTest {
     private final MockMvc mvc;
@@ -33,7 +36,6 @@ class ArticleControllerTest {
                 .andExpect(model().attributeExists("articles")); //서버에서 view로 밀어넣어준 model 중에 articles 속성이 있는지 확인
     }
 
-    @Disabled("구현 중")
     @DisplayName("[view][GET] 게시글 상세 페이지 - 정상 호출")
     @Test
     public void givenNothing_whenRequestingArticleView_thenReturnsArticleView() throws Exception {
