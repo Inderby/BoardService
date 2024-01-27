@@ -20,7 +20,6 @@ class ArticleControllerTest {
         this.mvc = mvc;
     }
 
-    @Disabled("구현 중")
     @DisplayName("[view][GET] 게시글 리스트 (게시판) 페이지 - 정상 호출")
     @Test
     public void givenNothing_whenRequestingArticlesView_thenReturnsArticlesView() throws Exception {
@@ -29,7 +28,7 @@ class ArticleControllerTest {
         //When&Then
         mvc.perform(get("/articles"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.TEXT_HTML))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))//호환되는 유형까지 맞다고 처리해줌
                 .andExpect(view().name("articles/index")) //view 파일의 이름을 조건에 추가해줄 수 있다
                 .andExpect(model().attributeExists("articles")); //서버에서 view로 밀어넣어준 model 중에 articles 속성이 있는지 확인
     }
@@ -43,7 +42,7 @@ class ArticleControllerTest {
         //When&Then
         mvc.perform(get("/articles/1"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.TEXT_HTML))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
                 .andExpect(view().name("articles/detail")) //view 파일의 이름을 조건에 추가해줄 수 있다
                 .andExpect(model().attributeExists("article"))
                 .andExpect(model().attributeExists("articleComments"));
@@ -59,7 +58,7 @@ class ArticleControllerTest {
         mvc.perform(get("/articles/search"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("articles/search")) //view 파일의 이름을 조건에 추가해줄 수 있다
-                .andExpect(content().contentType(MediaType.TEXT_HTML));
+                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML));
     }
 
     @Disabled("구현 중")
@@ -72,6 +71,6 @@ class ArticleControllerTest {
         mvc.perform(get("/articles/search-hashtag"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("articles/hashtag")) //view 파일의 이름을 조건에 추가해줄 수 있다
-                .andExpect(content().contentType(MediaType.TEXT_HTML));
+                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML));
     }
 }
