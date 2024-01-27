@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>게시글 페이지</title>
+</head>
+<body>
+<header id="header"></header>
+<main>
+    <header>
+        <h1>첫번째 글</h1>
+    </header>
+    <aside>
+        <p><span>Inderby</span></p>
+        <p><a rel="me" href="mailto:dydqls8254@gmail.com">dydqls8254@gmail.com</a></p>
+        <p>
+            <time datetime="2022-01-01T00:00:00">2022-01-01T00:00:00</time>
+        </p>
+        <p>#java</p>
+    </aside>
+    <section>
+        <p>본문<br><br></p>
+        <div>
+            <form action="">
+                <label for="articleComment" hidden>댓글</label>
+                <textarea id="articleComment" cols="30" rows="10" placeholder="댓글 쓰기"></textarea>
+                <button type="submit">쓰기</button>
+            </form>
+            <ul>
+                <li>
+                    <div>
+                        <time><small>2022-01-01</small></time>
+                        <strong>Inderby</strong>
+                        <p>댓글입니다 댓글</p>
+                    </div>
+                </li>
+                <li>
+                    <div>
+                        <time><small>2022-01-01</small></time>
+                        <strong>Inderby</strong>
+                        <p>댓글입니다 댓글2</p>
+                    </div>
+                </li>
+                <li>
+                    <div>
+                        <time><small>2022-01-01</small></time>
+                        <strong>Inderby</strong>
+                        <p>댓글입니다 댓글3</p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <nav role="navigation">
+            <a href="#">이전 글</a>
+            <a href="#">다음 글</a>
+        </nav>
+    </section>
+
+</main>
+<footer id="footer"></footer>
+</body>
+</html>
