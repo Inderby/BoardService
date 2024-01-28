@@ -6,6 +6,8 @@ logging:
     org.springframework.web.servlet: debug
     org.hibernate.type.descriptor.sql.BasicBinder: trace # jpa 기술을 사용할 때 Query로그를 디버그 로그로 관찰 할 수 있는데. 그때 물음표로 나오는 값들을 실제 값으로 추적 해주는 설넥
 
+thymeleaf3:
+  decoupled-logic: true
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/board
@@ -25,8 +27,12 @@ spring:
   data.rest:
     base-path: /api
     detection-strategy: annotated #repository를 실제로 rest api로 노출 시킬 건지를 지정하는 전략
-  thymeleaf3:
-    decoupled-logic: true
+  devtools:
+    restart:
+      enabled: false
+  thymeleaf:
+    cache: false
+
 ---
 spring:
   config.activate.on-profile: testdb
