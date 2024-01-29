@@ -10,6 +10,8 @@ import org.springframework.data.querydsl.binding.QuerydslBinderCustomizer;
 import org.springframework.data.querydsl.binding.QuerydslBindings;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
+import java.util.List;
+
 @RepositoryRestResource
 public interface ArticleCommentRepository extends JpaRepository<ArticleComment, Long>,
         QuerydslPredicateExecutor<ArticleComment>, //Article 안에 있는 모든 필드에 대한 기본 검색 기능을 추가해줌
@@ -24,4 +26,6 @@ public interface ArticleCommentRepository extends JpaRepository<ArticleComment, 
         bindings.bind(root.createdAt).first((DateTimeExpression::eq)); //TODO : 해당 방법은 시, 분, 초까지 동일해야 검색 대상이 되므로 이부분에 대한 수정이 필요하다
         bindings.bind(root.createdBy).first((StringExpression::containsIgnoreCase));
     }
+
+    List<ArticleComment> findByArticle_Id(Long articleId); //articleComment의 요소가 아닌 articleComment안에 있는 article의 id를 통해 댓글을 검색하고 있음. 때문에 _(언더 스코어를 써줘서 객체 안으로 들어가도록 사)
 }
