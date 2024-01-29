@@ -18,7 +18,9 @@ spring:
     database: mysql
     defer-datasource-initialization: true #data.sql을 이용해 초기 데이터를 받아올 것인지에 대한 설정
     hibernate.ddl-auto: create # entity를 보고 database schema를 알아서 만들어줄 것인지에 대한 설정
-    #open-in-view: false
+    open-in-view: false
+    #open session in view를 설정하는 부분 (OSIV 개념)
+    #내가 구현한 서비스에서는 controller 레벨에서 영속성 컨텍스트가 살아있지 않도록 도메인 코드와 DTO 코드를 확실히 분리하여 서비스 코드에서 다 마무리 된 데이터를 컨트롤러에 옮기게 만듬.
     show-sql: true
     properties:
       hibernate.format_sql: true
