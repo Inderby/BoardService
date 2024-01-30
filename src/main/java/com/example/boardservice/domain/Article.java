@@ -17,7 +17,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @Getter
-@ToString
+@ToString(callSuper = true)
 @Table(indexes = {
         @Index(columnList = "title"),
         @Index(columnList = "hashtag"),
@@ -35,7 +35,7 @@ public class Article extends AuditingFields{
 
     @Setter private String hashtag; //해시태그
 
-    @OrderBy("id") //id를 기준으로 정렬
+    @OrderBy("createdAt DESC") //댓글 생성 순서대 정렬
     @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)//mappedBy를 사용하지 않으면 기본 이름을 사용하게 된다(기본 이름 : article_articleComment)
     @ToString.Exclude //ToString 대상에서 제외 처리를 해주지 않는다면 성능 이슈 뿐만 아니라 순환참조가 발생할 수 있기 때문에 이를 방지하기 위해 필수
     private final Set<ArticleComment> articleComments = new LinkedHashSet<>();
@@ -45,14 +45,15 @@ public class Article extends AuditingFields{
 
     protected Article() {} //Hibernate 구현체를 사용하는 경우 기본 생성자를 갖고 있어야한다. 최소 protected부터 가능하다
 
-    public Article(String title, String content, String hashtag) {
+    public Article(UserAccount userAccount,String title, String content, String hashtag) {
+        this.userAccount = userAccount;
         this.title = title;
         this.content = content;
         this.hashtag = hashtag;
     }
 
-    public static Article of(String title, String content, String hashtag) {
-        return new Article(title, content, hashtag);
+    public static Article of(UserAccount userAccount, String title, String content, String hashtag) {
+        return new Article(userAccount, title, content, hashtag);
     }
 
     @Override

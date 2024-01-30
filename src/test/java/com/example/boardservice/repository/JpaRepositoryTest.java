@@ -2,6 +2,7 @@ package com.example.boardservice.repository;
 
 import com.example.boardservice.config.JpaConfig;
 import com.example.boardservice.domain.Article;
+import com.example.boardservice.service.TestFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class JpaRepositoryTest {
     private final ArticleRepository articleRepository;
     private final ArticleCommentRepository articleCommentRepository;
+    private final TestFixture fixture = new TestFixture();
 
     public JpaRepositoryTest(@Autowired ArticleRepository articleRepository,
                              @Autowired ArticleCommentRepository articleCommentRepository) {
@@ -46,7 +48,7 @@ class JpaRepositoryTest {
     void givenTestDate_whenInserting_thenWorksFine(){
         //Given
         long  previousCount = articleRepository.count();
-        Article article = Article.of("new article", "new content", "#new");
+        Article article = Article.of(fixture.createUserAccount(),"new article", "new content", "#new");
         //When
         Article savedArticle = articleRepository.save(article);
 
