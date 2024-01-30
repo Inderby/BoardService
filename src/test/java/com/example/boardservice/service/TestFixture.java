@@ -5,10 +5,12 @@ import com.example.boardservice.domain.ArticleComment;
 import com.example.boardservice.domain.UserAccount;
 import com.example.boardservice.dto.ArticleCommentDto;
 import com.example.boardservice.dto.ArticleDto;
+import com.example.boardservice.dto.ArticleWithCommentsDto;
 import com.example.boardservice.dto.UserAccountDto;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Component
 public class TestFixture {
@@ -80,5 +82,20 @@ public class TestFixture {
                 "inderby",
                 LocalDateTime.now(),
                 "inderby");
+    }
+
+    public ArticleWithCommentsDto createArticleWithCommentDto(){
+        return ArticleWithCommentsDto.of(
+                1L,
+                createUserAccountDto(),
+                Set.of(),
+                "title",
+                "content",
+                "#java",
+                LocalDateTime.now(),
+                "inderby",
+                LocalDateTime.now(),
+                "inderby"
+        );
     }
 }
