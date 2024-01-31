@@ -3,22 +3,18 @@ package com.example.boardservice.service;
 import com.example.boardservice.domain.Article;
 import com.example.boardservice.domain.type.SearchType;
 import com.example.boardservice.dto.ArticleDto;
-import com.example.boardservice.dto.ArticleUpdateDto;
 import com.example.boardservice.dto.ArticleWithCommentsDto;
 import com.example.boardservice.repository.ArticleRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -54,12 +50,12 @@ class ArticleServiceTest {
         SearchType searchType = SearchType.TITLE;
         String searchKeyWord = "title";
         Pageable pageable = Pageable.ofSize(20);
-        given(articleRepository.findByTitle(searchKeyWord, pageable)).willReturn(Page.empty());
+        given(articleRepository.findByTitleContainingIgnoreCase(searchKeyWord, pageable)).willReturn(Page.empty());
         //When
-        Page<ArticleDto> articles = sut.searchArticles(SearchType.TITLE, "search keyword", pageable); //제목, 본문, ID, 닉네임, 해시태그
+        Page<ArticleDto> articles = sut.searchArticles(SearchType.TITLE, "title", pageable); //제목, 본문, ID, 닉네임, 해시태그
         //Then
         assertThat(articles).isEmpty();
-        then(articleRepository).should().findByTitle(searchKeyWord, pageable);
+        then(articleRepository).should().findByTitleContainingIgnoreCase(searchKeyWord, pageable);
     }
 
     @DisplayName("게시글 조회 -> 단일 게시글 반환")
@@ -68,9 +64,9 @@ class ArticleServiceTest {
         //Given
         Long articleId = 1L;
         Article article = testFixture.createArticle();
-        given(articleRepository.findById(article.getId())).willReturn(Optional.of(article));
+        given(articleRepository.findById(articleId)).willReturn(Optional.of(article));
         //When
-        ArticleWithCommentsDto dto = sut.searchArticle(articleId);
+        ArticleWithCommentsDto dto = sut.getArticle(articleId);
         //Then
         assertThat(dto)
                 .hasFieldOrPropertyWithValue("title", article.getTitle())
@@ -84,7 +80,7 @@ class ArticleServiceTest {
     void givenNonexistentArticleId_whenSearchingArticle_thenThrowsException(){
         //Given
         Long articleId = 0L;
-        given(articleRepository.findById(articleId)).willThrow(EntityNotFoundException.class);
+        given(articleRepository.findById(articleId)).willReturn(Optional.empty());
         //When
         Throwable t = catchThrowable(()-> sut.getArticle(articleId));
         //Then
@@ -114,6 +110,9 @@ class ArticleServiceTest {
         Article article = testFixture.createArticle();
         ArticleDto dto = testFixture.createArticleDto("new title", "new content", "#new hashtag");
         given(articleRepository.getReferenceById(dto.id())).willReturn(article);
+        //getReferenceById는 findById와 비슷하게 동작하지만, findById는 select 쿼리를 통해 영속성 컨텍스트에서 가져온 뒤에 업데이트 동작을 하지만 getReferenceById는 해당 entity가 이미 DB에 있다는 전제하에 바로 update 쿼리를 날려버리는 점에서 내부 동작이 다르다.
+        //getOne이 기존에 존재했지만 boot 2.7 이후로 deprecated 됨
+
         //When
         sut.updateArticle(dto);
         //Then

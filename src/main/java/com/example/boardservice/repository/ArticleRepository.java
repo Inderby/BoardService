@@ -30,5 +30,9 @@ public interface ArticleRepository extends JpaRepository<Article, Long>,
         bindings.bind(root.createdBy).first((StringExpression::containsIgnoreCase));
     }
 
-    Page<Article> findByTitle(String searchKeyWord, Pageable pageable);
+    Page<Article> findByTitleContainingIgnoreCase(String title, Pageable pageable);
+    Page<Article> findByContentContainingIgnoreCase(String content, Pageable pageable);
+    Page<Article> findByUserAccount_UserIdContainingIgnoreCase(String userId, Pageable pageable);
+    Page<Article> findByUserAccount_NicknameContainingIgnoreCase(String nickname, Pageable pageable); //TODO : 인덱스 지정의 의미가 사라질 수 있기 때문에 tuning 필요
+    Page<Article> findByHashtagIgnoreCase(String hashtag, Pageable pageable);
 }
