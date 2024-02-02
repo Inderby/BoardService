@@ -2,6 +2,7 @@ package com.example.boardservice.repository;
 
 import com.example.boardservice.domain.Article;
 import com.example.boardservice.domain.QArticle;
+import com.example.boardservice.repository.querydsl.ArticleRepositoryCustom;
 import com.querydsl.core.types.dsl.DateTimeExpression;
 import com.querydsl.core.types.dsl.StringExpression;
 import org.springframework.data.domain.Page;
@@ -16,7 +17,8 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 @RepositoryRestResource //Spring data rest 기능을 사용하는 annotation
 public interface ArticleRepository extends JpaRepository<Article, Long>,
         QuerydslPredicateExecutor<Article>, //Article 안에 있는 모든 필드에 대한 기본 검색 기능을 추가해줌
-        QuerydslBinderCustomizer<QArticle> //서비스의 입맛에 맞는 검색 기능을 추가하기 위해 사용함
+        QuerydslBinderCustomizer<QArticle>, //서비스의 입맛에 맞는 검색 기능을 추가하기 위해 사용함
+        ArticleRepositoryCustom
 {
     @Override
     default void customize(QuerydslBindings bindings, QArticle root){ //spring data jpa를 이용해서 인터페이스 만을 가지고 기능을 사용하고 있기 때문에 default 키워드를 사용해 이곳에 정의하는 것이 적절해 보임
