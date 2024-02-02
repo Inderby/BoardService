@@ -1,6 +1,5 @@
 package com.example.boardservice.service;
 
-import com.example.boardservice.domain.Article;
 import com.example.boardservice.domain.ArticleComment;
 import com.example.boardservice.dto.ArticleCommentDto;
 import com.example.boardservice.repository.ArticleCommentRepository;
@@ -14,7 +13,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -26,7 +24,7 @@ class ArticleCommentServiceTest {
     @InjectMocks private ArticleCommentService sut;
     @Mock private ArticleCommentRepository articleCommentRepository;
     @Mock private ArticleRepository articleRepository;
-    @Mock private TestFixture fixture = new TestFixture();
+    private final TestFixture fixture = new TestFixture();
 
     @DisplayName("게시글 ID로 조회하면, 해당하는 댓글 리스트를 반환한다.")
     @Test
@@ -85,7 +83,7 @@ class ArticleCommentServiceTest {
         assertThat(articleComment.getContent())
                 .isNotEqualTo(oldContent)
                 .isEqualTo(updatedContent);
-        then(articleRepository).should().getReferenceById(dto.id());
+        then(articleCommentRepository).should().getReferenceById(dto.id());
     }
 
     @DisplayName("없는 댓글 정보를 수정하려고 하면, 경고 로그를 찍고 아무것도 안한다")
