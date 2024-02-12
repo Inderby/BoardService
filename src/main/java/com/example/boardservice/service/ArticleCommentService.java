@@ -1,9 +1,12 @@
 package com.example.boardservice.service;
 
+import com.example.boardservice.domain.Article;
 import com.example.boardservice.domain.ArticleComment;
+import com.example.boardservice.domain.UserAccount;
 import com.example.boardservice.dto.ArticleCommentDto;
 import com.example.boardservice.repository.ArticleCommentRepository;
 import com.example.boardservice.repository.ArticleRepository;
+import com.example.boardservice.repository.UserAccountRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +20,7 @@ import java.util.List;
 @Transactional
 @Service
 public class ArticleCommentService {
+    private final UserAccountRepository userAccountRepository;
     private final ArticleCommentRepository articleCommentRepository;
     private final ArticleRepository articleRepository;
 
@@ -30,7 +34,9 @@ public class ArticleCommentService {
 
     public void saveArticleComment(ArticleCommentDto dto) {
         try{
-            articleCommentRepository.save(dto.toEntity(articleRepository.getReferenceById(dto.articleId())));
+            Article article = articleRepository.getReferenceById(dto.articleId());
+            UserAccount userAccount = userAccountRepository.getReferenceById(dto.userAccountDto().userId());
+            articleCommentRepository.save(dto.toEntity(article, userAccount));
         }catch(EntityNotFoundException e){
             log.warn("댓글 저장 실패. 댓글의 게시글을 찾을 수 없습니다 - dt: {}", dto);
         }
@@ -41,7 +47,7 @@ public class ArticleCommentService {
             ArticleComment articleComment = articleCommentRepository.getReferenceById(dto.id());
             if(dto.content() != null){articleComment.setContent(dto.content());};
         }catch(EntityNotFoundException e){
-            log.warn("댓글 업데이트 실패. 댓글을 찾을 수 없습니다 - dto: {}", dto);
+            log.warn("댓글 업데이트 실패. 댓글 작성에 필요한 정보를 찾을 수 없습니다 - {}", e.getLocalizedMessage());
         }
     }
 
