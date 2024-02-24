@@ -7,17 +7,22 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.AuditorAware;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ActiveProfiles("testdb") //자동 test db로도 잘 동작하는 테스트 이기 때문에 없어도 되는 설정일 수 있지만 공부 목적으로 남겨둠
 @DisplayName("JPA 연결 테스트")
 // @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE) 자동 생성된 테스트 db를 사용하지 않고 설정파일에 있는 설정을 그대로 쓴다는 의미 해당 설정읠 yaml 파일에서 설정하여 전역화 시킬 수 있다.
-@Import(JpaConfig.class)
+@Import(JpaRepositoryTest.TestJpaConfig.class)
 @DataJpaTest //해당 어노테이션을 통해 SpringExtension이 등록되기 때문에 RunWith를 사용하지 않더라도 생성자 주입 패턴이 들어간다.
 class JpaRepositoryTest {
     private final ArticleRepository articleRepository;
@@ -86,5 +91,14 @@ class JpaRepositoryTest {
         //Then
         assertThat(articleRepository.count()).isEqualTo(previousArticleCount - 1);
         assertThat(articleCommentRepository.count()).isEqualTo(previousArticleCommentCount - deletedCommentsSize);
+    }
+
+    @EnableJpaAuditing
+    @TestConfiguration // JPA 레이어에서  테스트 할 때만 설정에 등록되게하는 어노테이션
+    public static class TestJpaConfig{
+        @Bean
+        public AuditorAware<String> auditorAware(){
+            return () -> Optional.of("inderby");
+        }
     }
 }

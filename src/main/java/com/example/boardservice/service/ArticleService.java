@@ -66,21 +66,24 @@ public class ArticleService {
     public void updateArticle(Long articleId, ArticleDto dto) {
         try {
             Article article = articleRepository.getReferenceById(articleId);
-            if (dto.title() != null) {
-                article.setTitle(dto.title());
-            } //java 13이후로 생긴 record에는 getter setter가 이미 들어가있다.
-            if (dto.content() != null) {
-                article.setContent(dto.content());
+            UserAccount userAccount = userAccountRepository.getReferenceById(dto.userAccountDto().userId());
+            if(article.getUserAccount().equals(userAccount)) {
+                if (dto.title() != null) {
+                    article.setTitle(dto.title());
+                } //java 13이후로 생긴 record에는 getter setter가 이미 들어가있다.
+                if (dto.content() != null) {
+                    article.setContent(dto.content());
+                }
+                article.setHashtag(dto.hashtag()); // hashtag는 nullable이기 때문에 방어 코드를 작성하지 않는다.
             }
-            article.setHashtag(dto.hashtag()); // hashtag는 nullable이기 때문에 방어 코드를 작성하지 않는다.
             //class level transaction 에 의해서 메소드 단위로 트랜잭션이 묶여 있다. 때문에 트잭션이 끝날 때 영속성 컨텍스트가 변화에 대해 감지하고 그에 대한 query 를 날려주기 때문에 save를 쓰지 않아도 된다.
         }catch(EntityNotFoundException e){
-            log.warn("게시글 업데이트 실패. 게시글을 찾을 수 없습니다. - dto: " + dto);
+            log.warn("게시글 업데이트 실패. 게시글을 수정하는데 필요한 정보를 찾을 수 없습니다. - dto: {}", e.getLocalizedMessage());
         }
     }
 
-    public void deleteArticle(long articleId) {
-        articleRepository.deleteById(articleId);
+    public void deleteArticle(long articleId, String userId) {
+        articleRepository.deleteByIdAndUserAccount_UserId(articleId, userId);
     }
 
     public long getArticleCount() {
