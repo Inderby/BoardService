@@ -20,6 +20,8 @@ public interface ArticleRepository extends JpaRepository<Article, Long>,
         QuerydslBinderCustomizer<QArticle>, //서비스의 입맛에 맞는 검색 기능을 추가하기 위해 사용함
         ArticleRepositoryCustom
 {
+    void deleteByIdAndUserAccount_UserId(Long articleId, String userId);
+
     @Override
     default void customize(QuerydslBindings bindings, QArticle root){ //spring data jpa를 이용해서 인터페이스 만을 가지고 기능을 사용하고 있기 때문에 default 키워드를 사용해 이곳에 정의하는 것이 적절해 보임
         // 이곳에서 QuerydslPredicateExecutor에 의해 열려 있는 모든 필드들에 대한 검색 기능 중에 제외 하고 싶은 것을 설정

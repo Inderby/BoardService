@@ -1,4 +1,7 @@
-package com.example.boardservice.dto;
+package com.example.boardservice.dto.request;
+
+import com.example.boardservice.dto.ArticleDto;
+import com.example.boardservice.dto.UserAccountDto;
 
 public record ArticleRequest(
         String title,

@@ -190,6 +190,7 @@ class ArticleServiceTest {
         Article article = testFixture.createArticle();
         ArticleDto dto = testFixture.createArticleDto("new title", "new content", "#new hashtag");
         given(articleRepository.getReferenceById(dto.id())).willReturn(article);
+        given(userAccountRepository.getReferenceById(dto.userAccountDto().userId())).willReturn(dto.userAccountDto().toEntity());
         //getReferenceById는 findById와 비슷하게 동작하지만, findById는 select 쿼리를 통해 영속성 컨텍스트에서 가져온 뒤에 업데이트 동작을 하지만 getReferenceById는 해당 entity가 이미 DB에 있다는 전제하에 바로 update 쿼리를 날려버리는 점에서 내부 동작이 다르다.
         //getOne이 기존에 존재했지만 boot 2.7 이후로 deprecated 됨
 
@@ -201,7 +202,7 @@ class ArticleServiceTest {
                 .hasFieldOrPropertyWithValue("content", dto.content())
                 .hasFieldOrPropertyWithValue("hashtag", dto.hashtag());
         then(articleRepository).should().getReferenceById(dto.id());
-
+        then(userAccountRepository).should().getReferenceById(dto.userAccountDto().userId());
     }
 
     @DisplayName("없는 게시글의 수정 정보를 입력하면, 경고 로그를 찍고 아무 것도 하지 않는다.")
@@ -222,11 +223,12 @@ class ArticleServiceTest {
     void givenArticleId_whenDeletingArticle_thenDeletesArticle() {
         //Given
         Long articleId = 1L;
-        willDoNothing().given(articleRepository).deleteById(articleId); //deleteArticle 메서드 안에 내부적으로 deleteById 메서드가 호출될 것이라는 것을 명시적으로 보여주는 코드(기능상 의미는 없다)
+        String userId = "inderby";
+        willDoNothing().given(articleRepository).deleteByIdAndUserAccount_UserId(articleId, userId); //deleteArticle 메서드 안에 내부적으로 deleteById 메서드가 호출될 것이라는 것을 명시적으로 보여주는 코드(기능상 의미는 없다)
         //When
-        sut.deleteArticle(articleId);
+        sut.deleteArticle(articleId, userId);
         //Then
-        then(articleRepository).should().deleteById(articleId);
+        then(articleRepository).should().deleteByIdAndUserAccount_UserId(articleId, userId);
 
     }
 

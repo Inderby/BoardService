@@ -27,5 +27,6 @@ public interface ArticleCommentRepository extends JpaRepository<ArticleComment, 
         bindings.bind(root.createdBy).first((StringExpression::containsIgnoreCase));
     }
 
+    void deleteByIdAndUserAccount_UserId(Long articleCommentId, String userId);
     List<ArticleComment> findByArticle_Id(Long articleId); //articleComment의 요소가 아닌 articleComment안에 있는 article의 id를 통해 댓글을 검색하고 있음. 때문에 _(언더 스코어를 써줘서 객체 안으로 들어가도록 사)
 }
