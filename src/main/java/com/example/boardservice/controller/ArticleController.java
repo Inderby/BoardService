@@ -97,7 +97,6 @@ public class ArticleController {
     @PostMapping("/{articleId}/form")
     public String updateArticle(@PathVariable(name="articleId") Long articleId, ArticleRequest articleRequest,
                     @AuthenticationPrincipal BoardPrincipal boardPrincipal) {
-        // TODO: 인증 정보를 넣어줘야 한다.
         articleService.updateArticle(articleId, articleRequest.toDto(BoardPrincipal.toDto(boardPrincipal))
         );
 
