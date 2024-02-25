@@ -43,3 +43,12 @@ spring:
     driverClassName: org.h2.Driver
   sql.init.mode: always
   test.database.replace: none #해당 속성을 써주지 않는다면 @DataJpaTest를 활용한 test 환경에서 testdb를 사용하도록 지정하여도 개발자가 지정한 설정들을 무시하고 test용 db를 자체적으로 생성한다.
+
+---
+
+spring:
+  config.activate.on-profile: heroku
+  datasource:
+    url: ${CLEARDB_DATABASE_URL}
+  jpa.hibernate.ddl-auto: create
+  sql.init.mode: always
