@@ -65,7 +65,7 @@ public class ArticleService {
 
     public void updateArticle(Long articleId, ArticleDto dto) {
         try {
-            Article article = articleRepository.getReferenceById(articleId);
+            Article article = articleRepository.findById(articleId).get();
             UserAccount userAccount = userAccountRepository.getReferenceById(dto.userAccountDto().userId());
             if(article.getUserAccount().equals(userAccount)) {
                 if (dto.title() != null) {
