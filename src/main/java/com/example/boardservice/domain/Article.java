@@ -53,12 +53,12 @@ public class Article extends AuditingFields{
     public boolean equals(Object o) { //id라는 유니크한 속성만으로도 동등한 객체인지에 대한 비교가 충분하기 때문에 id만을 사용하여 성능을 높여줌
         if (this == o) return true;
         if (!(o instanceof Article article)) return false;
-        return id != null &&  id.equals(article.id);
+        return this.getId() != null &&  this.getId().equals(article.id);
         //아직 영속화가 되기 전이면 null일 수 있기 때문에 null check와 동시에 아직 영속화 대상에 포함되지 않는 객체들은 같은 대상으로 보지 않겠다는 의미도 갖고 있음.
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(this.getId());
     }
 }
