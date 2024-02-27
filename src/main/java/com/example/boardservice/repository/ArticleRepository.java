@@ -26,10 +26,10 @@ public interface ArticleRepository extends JpaRepository<Article, Long>,
     default void customize(QuerydslBindings bindings, QArticle root){ //spring data jpa를 이용해서 인터페이스 만을 가지고 기능을 사용하고 있기 때문에 default 키워드를 사용해 이곳에 정의하는 것이 적절해 보임
         // 이곳에서 QuerydslPredicateExecutor에 의해 열려 있는 모든 필드들에 대한 검색 기능 중에 제외 하고 싶은 것을 설정
         bindings.excludeUnlistedProperties(true); //listing하지 않은 property는 검색에서 제외하도록 설정
-        bindings.including(root.title, root.hashtag, root.content, root.createdAt, root.createdBy); //검색 기능을 지원하고 싶은 항목을 지정
+        bindings.including(root.title, root.hashtags, root.content, root.createdAt, root.createdBy); //검색 기능을 지원하고 싶은 항목을 지정
         bindings.bind(root.title).first((StringExpression::containsIgnoreCase)); //대소문자를 구분하지 않고 부분 문자열에 대한 검색 기능을 지원하게 설정
         bindings.bind(root.content).first((StringExpression::containsIgnoreCase));
-        bindings.bind(root.hashtag).first((StringExpression::containsIgnoreCase));
+        bindings.bind(root.hashtags.any().hashtagName).first((StringExpression::containsIgnoreCase));
         bindings.bind(root.createdAt).first((DateTimeExpression::eq)); //TODO : 해당 방법은 시, 분, 초까지 동일해야 검색 대상이 되므로 이부분에 대한 수정이 필요하다
         bindings.bind(root.createdBy).first((StringExpression::containsIgnoreCase));
     }
@@ -38,5 +38,5 @@ public interface ArticleRepository extends JpaRepository<Article, Long>,
     Page<Article> findByContentContainingIgnoreCase(String content, Pageable pageable);
     Page<Article> findByUserAccount_UserIdContainingIgnoreCase(String userId, Pageable pageable);
     Page<Article> findByUserAccount_NicknameContainingIgnoreCase(String nickname, Pageable pageable); //TODO : 인덱스 지정의 의미가 사라질 수 있기 때문에 tuning 필요
-    Page<Article> findByHashtagIgnoreCase(String hashtag, Pageable pageable);
+    Page<Article> findByHashtagsIgnoreCase(String hashtag, Pageable pageable);
 }

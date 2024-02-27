@@ -15,6 +15,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -26,18 +28,19 @@ public class ArticleService {
     private final UserAccountRepository userAccountRepository;
 
     @Transactional(readOnly = true)
-    public Page<ArticleDto> searchArticles(SearchType searchType, String search_keyword, Pageable pageable) {
-        if(search_keyword == null || search_keyword.isBlank()){
+    public Page<ArticleDto> searchArticles(SearchType searchType, String searchKeyword, Pageable pageable) {
+        if(searchKeyword == null || searchKeyword.isBlank()){
             return articleRepository.findAll(pageable).map(ArticleDto::from);
         }
 
         return switch (searchType){
-            case TITLE -> articleRepository.findByTitleContainingIgnoreCase(search_keyword, pageable).map(ArticleDto::from);
-            case CONTENT -> articleRepository.findByContentContainingIgnoreCase(search_keyword, pageable).map(ArticleDto::from);
-            case ID-> articleRepository.findByUserAccount_UserIdContainingIgnoreCase(search_keyword, pageable).map(ArticleDto::from);
-            case NICKNAME -> articleRepository.findByUserAccount_NicknameContainingIgnoreCase(search_keyword, pageable).map(ArticleDto::from);
-            case HASHTAG -> articleRepository.findByHashtagIgnoreCase("#" + search_keyword, pageable).map(ArticleDto::from);
-            //TODO : 현재는 수동으로 사용자의 입력에 #을 직접 추가해주는 로직을 넣어줬지만 사용자가 직접 #을 추가했을 경우 2번 #이 들어갈 수 있으므로 이에 대한 처리 로직 필요
+            case TITLE -> articleRepository.findByTitleContainingIgnoreCase(searchKeyword, pageable).map(ArticleDto::from);
+            case CONTENT -> articleRepository.findByContentContainingIgnoreCase(searchKeyword, pageable).map(ArticleDto::from);
+            case ID-> articleRepository.findByUserAccount_UserIdContainingIgnoreCase(searchKeyword, pageable).map(ArticleDto::from);
+            case NICKNAME -> articleRepository.findByUserAccount_NicknameContainingIgnoreCase(searchKeyword, pageable).map(ArticleDto::from);
+            case HASHTAG -> articleRepository.findByHashtagNames(
+                    Arrays.stream(searchKeyword.split(" ")).toList(),pageable
+            ).map(ArticleDto::from);
         };
     }
 
@@ -74,7 +77,6 @@ public class ArticleService {
                 if (dto.content() != null) {
                     article.setContent(dto.content());
                 }
-                article.setHashtag(dto.hashtag()); // hashtag는 nullable이기 때문에 방어 코드를 작성하지 않는다.
             }
             //class level transaction 에 의해서 메소드 단위로 트랜잭션이 묶여 있다. 때문에 트잭션이 끝날 때 영속성 컨텍스트가 변화에 대해 감지하고 그에 대한 query 를 날려주기 때문에 save를 쓰지 않아도 된다.
         }catch(EntityNotFoundException e){
@@ -95,7 +97,7 @@ public class ArticleService {
         if(hashtag == null || hashtag.isBlank()){
             return Page.empty(pageable);
         }
-        return articleRepository.findByHashtagIgnoreCase(hashtag, pageable).map(ArticleDto::from);
+        return articleRepository.findByHashtagsIgnoreCase(null, pageable).map(ArticleDto::from);
     }
 
     public List<String> getHashtags() {
