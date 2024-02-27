@@ -2,12 +2,11 @@ package com.example.boardservice.service;
 
 import com.example.boardservice.domain.Article;
 import com.example.boardservice.domain.ArticleComment;
+import com.example.boardservice.domain.Hashtag;
 import com.example.boardservice.domain.UserAccount;
-import com.example.boardservice.dto.ArticleCommentDto;
-import com.example.boardservice.dto.ArticleDto;
-import com.example.boardservice.dto.ArticleWithCommentsDto;
-import com.example.boardservice.dto.UserAccountDto;
+import com.example.boardservice.dto.*;
 import org.springframework.stereotype.Component;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -44,7 +43,7 @@ public class TestFixture {
 
     public ArticleComment createArticleComment(String content) {
         return ArticleComment.of(
-                Article.of(createUserAccount(), "title", "content", "hashtag"),
+                Article.of(createUserAccount(), "title", "content"),
                 createUserAccount(),
                 content
         );
@@ -64,20 +63,19 @@ public class TestFixture {
         return Article.of(
                 createUserAccount(),
                 "title",
-                "content",
-                "#java"
+                "content"
         );
     }
     public ArticleDto createArticleDto() {
-        return createArticleDto("title", "content", "#java");
+        return createArticleDto("title", "content");
     }
 
-    public ArticleDto createArticleDto(String title, String content, String hashtag) {
+    public ArticleDto createArticleDto(String title, String content) {
         return ArticleDto.of(1L,
                 createUserAccountDto(),
                 title,
                 content,
-                hashtag,
+                Set.of(HashtagDto.of("java")),
                 LocalDateTime.now(),
                 "inderby",
                 LocalDateTime.now(),
@@ -91,11 +89,51 @@ public class TestFixture {
                 Set.of(),
                 "title",
                 "content",
-                "#java",
+                Set.of(HashtagDto.of("java")),
                 LocalDateTime.now(),
                 "inderby",
                 LocalDateTime.now(),
                 "inderby"
+        );
+    }
+
+    public Hashtag createHashtag(String hashtagName) {
+        return createHashtag(1L, hashtagName);
+    }
+
+    public Hashtag createHashtag(Long id, String hashtagName) {
+        Hashtag hashtag = Hashtag.of(hashtagName);
+        ReflectionTestUtils.setField(hashtag, "id", id);
+
+        return hashtag;
+    }
+
+    public HashtagDto createHashtagDto() {
+        return HashtagDto.of("java");
+    }
+
+    public Article createArticle(Long id) {
+        Article article = Article.of(
+                createUserAccount(),
+                "title",
+                "content"
+        );
+        article.addHashtags(Set.of(
+                createHashtag(1L, "java"),
+                createHashtag(2L, "spring")
+        ));
+        ReflectionTestUtils.setField(article, "id", id);
+
+        return article;
+    }
+
+    public UserAccount createUserAccount(String userId) {
+        return UserAccount.of(
+                userId,
+                "password",
+                "inderby@email.com",
+                "Inderby",
+                null
         );
     }
 }
