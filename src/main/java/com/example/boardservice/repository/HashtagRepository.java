@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-public interface HashtagRepository extends JpaRepository<Hashtag, String>, QuerydslPredicateExecutor<Hashtag>, HashtagRepositoryCustom {
+public interface HashtagRepository extends JpaRepository<Hashtag, Long>, QuerydslPredicateExecutor<Hashtag>, HashtagRepositoryCustom {
     Optional<Hashtag> findByHashtagName(String hashtagName);
     List<Hashtag> findByHashtagNameIn(Set<String> hashtagNames);
 }
