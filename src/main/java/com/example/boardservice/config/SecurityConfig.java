@@ -26,7 +26,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET,
                                 "/"
                                 , "/articles"
-                                ,"/articles/search-hashtag").permitAll()
+                                ,"/articles/search-hashtag", "/error").permitAll()
                         .anyRequest().authenticated())
                 .formLogin(Customizer.withDefaults())
                 .logout(logout -> logout.logoutSuccessUrl("/"));
