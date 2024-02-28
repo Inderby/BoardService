@@ -308,8 +308,8 @@ class ArticleServiceTest {
     void givenArticleId_whenDeletingArticle_thenDeletesArticle() {
         // Given
         Long articleId = 1L;
-        String userId = "uno";
-        given(articleRepository.getReferenceById(articleId)).willReturn(testFixture.createArticle());
+        String userId = "inderby";
+        given(articleRepository.getReferenceById(articleId)).willReturn(testFixture.createArticle(articleId));
         willDoNothing().given(articleRepository).deleteByIdAndUserAccount_UserId(articleId, userId);
         willDoNothing().given(articleRepository).flush();
         willDoNothing().given(hashtagService).deleteHashtagWithoutArticles(any());
