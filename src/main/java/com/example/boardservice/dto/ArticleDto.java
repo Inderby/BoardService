@@ -35,8 +35,7 @@ public record ArticleDto(
                 entity.getTitle(),
                 entity.getContent(),
                 entity.getHashtags().stream()
-                        .map(Hashtag::getHashtagName)
-                        .map(HashtagDto::of)
+                        .map(HashtagDto::from)
                         .collect(Collectors.toUnmodifiableSet()),
                 entity.getCreatedAt(),
                 entity.getCreatedBy(),

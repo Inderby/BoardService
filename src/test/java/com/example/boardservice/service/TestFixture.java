@@ -60,11 +60,7 @@ public class TestFixture {
     }
 
     public Article createArticle() {
-        return Article.of(
-                createUserAccount(),
-                "title",
-                "content"
-        );
+        return createArticle(1L);
     }
     public ArticleDto createArticleDto() {
         return createArticleDto("title", "content");
