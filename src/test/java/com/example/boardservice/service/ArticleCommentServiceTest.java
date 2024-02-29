@@ -16,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.tuple;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.*;
 
@@ -34,19 +35,27 @@ class ArticleCommentServiceTest {
     void givenArticleId_whenSearchingArticleComments_thenReturnsArticleComments() {
         // Given
         Long articleId = 1L;
-        ArticleComment expected = fixture.createArticleComment("content");
-        given(articleCommentRepository.findByArticle_Id(articleId)).willReturn(List.of(expected));
+        ArticleComment expectedParentComment = fixture.createArticleComment(1L, "parent content");
+        ArticleComment expectedChildComment = fixture.createArticleComment(2L, "child content");
+        expectedChildComment.setParentCommentId(expectedParentComment.getId());
+        given(articleCommentRepository.findByArticle_Id(articleId)).willReturn(List.of(
+                expectedParentComment,
+                expectedChildComment
+        ));
 
         // When
         List<ArticleCommentDto> actual = sut.searchArticleComments(articleId);
 
         // Then
+        assertThat(actual).hasSize(2);
         assertThat(actual)
-                .hasSize(1)
-                .first().hasFieldOrPropertyWithValue("content", expected.getContent());
+                .extracting("id", "articleId", "parentCommentId", "content")
+                .containsExactlyInAnyOrder(
+                        tuple(1L, 1L, null, "parent content"),
+                        tuple(2L, 1L, 1L, "child content")
+                );
         then(articleCommentRepository).should().findByArticle_Id(articleId);
     }
-
     @DisplayName("댓글 정보를 입력하면, 댓글을 저장한다.")
     @Test
     void givenArticleCommentInfo_whenSavingArticleComment_thenSavesArticleComment() {
@@ -128,5 +137,27 @@ class ArticleCommentServiceTest {
 
         // Then
         then(articleCommentRepository).should().deleteByIdAndUserAccount_UserId(articleCommentId, userId);
+    }
+
+    @DisplayName("부모 댓글 ID와 댓글 정보를 입력하면, 대댓글을 저장한다.")
+    @Test
+    void givenParentCommentIdAndArticleCommentInfo_whenSaving_thenSavesChildComment() {
+        // Given
+        Long parentCommentId = 1L;
+        ArticleComment parent = fixture.createArticleComment(parentCommentId, "댓글");
+        ArticleCommentDto child = fixture.createArticleCommentDto(parentCommentId, "대댓글");
+        given(articleRepository.getReferenceById(child.articleId())).willReturn(fixture.createArticle());
+        given(userAccountRepository.getReferenceById(child.userAccountDto().userId())).willReturn(fixture.createUserAccount());
+        given(articleCommentRepository.getReferenceById(child.parentCommentId())).willReturn(parent);
+
+        // When
+        sut.saveArticleComment(child);
+
+        // Then
+        assertThat(child.parentCommentId()).isNotNull();
+        then(articleRepository).should().getReferenceById(child.articleId());
+        then(userAccountRepository).should().getReferenceById(child.userAccountDto().userId());
+        then(articleCommentRepository).should().getReferenceById(child.parentCommentId());
+        then(articleCommentRepository).should(never()).save(any(ArticleComment.class));
     }
 }

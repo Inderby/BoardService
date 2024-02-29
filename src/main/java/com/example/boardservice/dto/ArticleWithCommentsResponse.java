@@ -2,8 +2,8 @@ package com.example.boardservice.dto;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public record ArticleWithCommentsResponse(
@@ -39,10 +39,29 @@ public record ArticleWithCommentsResponse(
                 dto.userAccountDto().email(),
                 nickname,
                 dto.userAccountDto().userId(),
-                dto.articleCommentDtos().stream()
-                        .map(ArticleCommentResponse::from)
-                        .collect(Collectors.toCollection(LinkedHashSet::new))
+                organizeChildComments(dto.articleCommentDtos())
         );
+    }
+    //TODO : 대댓글 관련하여 복합구조(indent)정보가 service에 들어갈지 DTO에 들어갈지는 개발자의 선택이다. 나는 service 로직의 쾌적함을 위해 DTO에 구현하기로 결정함
+    private static Set<ArticleCommentResponse> organizeChildComments(Set<ArticleCommentDto> dtos){
+        Map<Long, ArticleCommentResponse> map = dtos.stream()
+                .map(ArticleCommentResponse::from)
+                .collect(Collectors.toMap(ArticleCommentResponse::id, Function.identity()));
+        map.values().stream()
+                .filter(ArticleCommentResponse::hasParentComment)
+                .forEach(comment->{
+                    ArticleCommentResponse parentComment = map.get(comment.parentCommentId());
+                    parentComment.childComments().add(comment);
+                });
+
+        return map.values().stream()
+                .filter(comment -> !comment.hasParentComment())
+                .collect(Collectors.toCollection(() ->
+                        new TreeSet<>(Comparator
+                                .comparing(ArticleCommentResponse::createdAt)
+                                .reversed()
+                                .thenComparingLong(ArticleCommentResponse::id)
+                        )));
     }
 
 }
