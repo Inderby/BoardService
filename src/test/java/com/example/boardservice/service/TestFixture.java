@@ -5,19 +5,28 @@ import com.example.boardservice.domain.ArticleComment;
 import com.example.boardservice.domain.Hashtag;
 import com.example.boardservice.domain.UserAccount;
 import com.example.boardservice.dto.*;
+import org.springframework.boot.test.context.TestComponent;
 import org.springframework.stereotype.Component;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDateTime;
 import java.util.Set;
 
-@Component
+@TestComponent
 public class TestFixture {
+
     public ArticleCommentDto createArticleCommentDto(String content) {
+        return createArticleCommentDto(null, content);
+    }
+    public ArticleCommentDto createArticleCommentDto(Long parentCommentId, String content){
+        return createArticleCommentDto(1L, parentCommentId, content);
+    }
+    public ArticleCommentDto createArticleCommentDto(Long id, Long parentCommentId, String content) {
         return ArticleCommentDto.of(
-                1L,
+                id,
                 1L,
                 createUserAccountDto(),
+                parentCommentId,
                 content,
                 LocalDateTime.now(),
                 "inderby",
@@ -49,6 +58,16 @@ public class TestFixture {
         );
     }
 
+    public ArticleComment createArticleComment(Long id, String content) {
+        ArticleComment articleComment = ArticleComment.of(
+                createArticle(),
+                createUserAccount(),
+                content
+        );
+        ReflectionTestUtils.setField(articleComment, "id", id);
+        return articleComment;
+    }
+
     public UserAccount createUserAccount() {
         return UserAccount.of(
                 "inderby",
@@ -57,6 +76,7 @@ public class TestFixture {
                 "inderby",
                 null
         );
+
     }
 
     public Article createArticle() {
@@ -130,6 +150,49 @@ public class TestFixture {
                 "inderby@email.com",
                 "Inderby",
                 null
+        );
+    }
+
+    private ArticleWithCommentsDto createArticleWithCommentsDto(Set<ArticleCommentDto> articleCommentDtos) {
+        return ArticleWithCommentsDto.of(
+                1L,
+                createUserAccountDto(),
+                articleCommentDtos,
+                "title",
+                "content",
+                Set.of(HashtagDto.of("java")),
+                LocalDateTime.now(),
+                "inderby",
+                LocalDateTime.now(),
+                "inderby"
+        );
+    }
+
+
+
+    public ArticleCommentDto createArticleCommentDto(Long id, Long parentCommentId, LocalDateTime createdAt) {
+        return ArticleCommentDto.of(
+                id,
+                1L,
+                createUserAccountDto(),
+                parentCommentId,
+                "test comment " + id,
+                createdAt,
+                "inderby",
+                createdAt,
+                "inderby"
+        );
+    }
+
+    public ArticleCommentResponse createArticleCommentResponse(Long id, Long parentCommentId, LocalDateTime createdAt) {
+        return ArticleCommentResponse.of(
+                id,
+                "test comment " + id,
+                createdAt,
+                "inderby@mail.com",
+                "inderby",
+                "inderby",
+                parentCommentId
         );
     }
 }
