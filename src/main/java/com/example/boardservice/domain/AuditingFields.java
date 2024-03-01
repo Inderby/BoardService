@@ -22,18 +22,18 @@ public class AuditingFields {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) //파싱에 대한 포맷터를 정해주는 에노테이션
     @CreatedDate
     @Column(nullable = false)
-    private LocalDateTime createdAt; //생성일시
+    protected LocalDateTime createdAt; //생성일시
 
     @CreatedBy
     @Column(length = 100, nullable = false, updatable = false)
-    private String createdBy; //생성자
+    protected String createdBy; //생성자
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) //파싱에 대한 포맷터를 정해주는 에노테이션
     @LastModifiedDate
     @Column(nullable = false)
-    private LocalDateTime modifiedAt; //수정일시
+    protected LocalDateTime modifiedAt; //수정일시
 
     @LastModifiedBy
     @Column(length = 100, nullable = false)
-    private String modifiedBy; //수정자
+    protected String modifiedBy; //수정자
 }
