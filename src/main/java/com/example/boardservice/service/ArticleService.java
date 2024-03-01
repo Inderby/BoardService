@@ -40,7 +40,9 @@ public class ArticleService {
         if (searchKeyword == null || searchKeyword.isBlank()) {
             return articleRepository.findAll(pageable).map(ArticleDto::from);
         }
-
+        if(searchType == SearchType.HASHTAG && pageable.getSort().getOrderFor(searchType.name().toLowerCase() + 's') != null){
+            return articleRepository.findAll(pageable).map(ArticleDto::from);
+        }
         return switch (searchType) {
             case TITLE ->
                     articleRepository.findByTitleContainingIgnoreCase(searchKeyword, pageable).map(ArticleDto::from);
