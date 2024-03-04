@@ -89,7 +89,7 @@ public class ArticleController {
 
     @GetMapping("/{articleId}/form")
     public String updateArticleForm(@PathVariable(name = "articleId") Long articleId, ModelMap map) {
-        ArticleResponse article = ArticleResponse.from(articleService.getArticle(articleId));
+        ArticleResponse article = ArticleResponse.from(articleService.getArticle(articleId)); //TODO : 갱신 부분에서 수정이 안되는 오류 발생 수정 바람.
 
         map.addAttribute("article", article);
         map.addAttribute("formStatus", FormStatus.UPDATE);
