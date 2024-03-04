@@ -76,7 +76,6 @@ public class TestFixture {
                 "inderby",
                 null
         );
-
     }
 
     public Article createArticle() {
@@ -149,7 +148,22 @@ public class TestFixture {
                 "password",
                 "inderby@email.com",
                 "Inderby",
-                null
+                "memo"
+        );
+    }
+
+    public UserAccount createSigningUpUserAccount(String username){
+        return createUserAccount(username, username);
+    }
+
+    public UserAccount createUserAccount(String username, String createdBy){
+        return UserAccount.of(
+                username,
+                "password",
+                "inderby@email.com",
+                "Inderby",
+                "memo",
+                createdBy
         );
     }
 
