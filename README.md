@@ -30,6 +30,4 @@ Spring Boot
 * Heroku
 
 ## 데모 페이지
-https://project-board-inderby-ac5ed8bf6b43.herokuapp.com/
-
-현재 헤로쿠의 보안 인증 관련 문제로 인해 환경 변수 설정을 하지 못해 카카오 로그인이 안되고 있는 상황이다. 지원 팀에서 조치를 취해주는대로 대응할 예정이다(2023.03.05)
+[https://project-board-inderby-ac5ed8bf6b43.herokuapp.com/](https://int-the-board-3946a5c094df.herokuapp.com/)
