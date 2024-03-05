@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.querydsl.binding.QuerydslBinderCustomizer;
 import org.springframework.data.querydsl.binding.QuerydslBindings;
+import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 //@Repository JpaRepository의 구현체인 SimpleRepository에 이미 해당 어노테이션이 들어가 있기 때문에 붙이지 않아도 된다. 또한 어노테이션은 관습적으로 interface에 붙이지 않는다.
@@ -20,7 +21,7 @@ public interface ArticleRepository extends JpaRepository<Article, Long>,
         QuerydslBinderCustomizer<QArticle>, //서비스의 입맛에 맞는 검색 기능을 추가하기 위해 사용함
         ArticleRepositoryCustom
 {
-    void deleteByIdAndUserAccount_UserId(Long articleId, String userId);
+    void deleteByIdAndUserAccount_UserId(@Param("articleId") Long articleId, @Param("userId") String userId);
 
     @Override
     default void customize(QuerydslBindings bindings, QArticle root){ //spring data jpa를 이용해서 인터페이스 만을 가지고 기능을 사용하고 있기 때문에 default 키워드를 사용해 이곳에 정의하는 것이 적절해 보임
@@ -34,9 +35,9 @@ public interface ArticleRepository extends JpaRepository<Article, Long>,
         bindings.bind(root.createdBy).first((StringExpression::containsIgnoreCase));
     }
 
-    Page<Article> findByTitleContainingIgnoreCase(String title, Pageable pageable);
-    Page<Article> findByContentContainingIgnoreCase(String content, Pageable pageable);
-    Page<Article> findByUserAccount_UserIdContainingIgnoreCase(String userId, Pageable pageable);
-    Page<Article> findByUserAccount_NicknameContainingIgnoreCase(String nickname, Pageable pageable); //TODO : 인덱스 지정의 의미가 사라질 수 있기 때문에 tuning 필요
-    Page<Article> findByHashtagsIgnoreCase(String hashtag, Pageable pageable);
+    Page<Article> findByTitleContainingIgnoreCase(@Param("title") String title, @Param("pageable") Pageable pageable);
+    Page<Article> findByContentContainingIgnoreCase(@Param("content")String content,@Param("pageable")Pageable pageable);
+    Page<Article> findByUserAccount_UserIdContainingIgnoreCase(@Param("userId")String userId,@Param("pageable") Pageable pageable);
+    Page<Article> findByUserAccount_NicknameContainingIgnoreCase(@Param("nickname")String nickname,@Param("pageable") Pageable pageable); //TODO : 인덱스 지정의 의미가 사라질 수 있기 때문에 tuning 필요
+    Page<Article> findByHashtagsIgnoreCase(@Param("hashtag")String hashtag,@Param("pageable") Pageable pageable);
 }
