@@ -240,7 +240,7 @@ class ArticleServiceTest {
         Set<String> expectedHashtagNames = Set.of("springboot");
         Set<Hashtag> expectedHashtags = new HashSet<>();
 
-        given(articleRepository.getReferenceById(dto.id())).willReturn(article);
+        given(articleRepository.findById(dto.id())).willReturn(Optional.of(article));
         given(userAccountRepository.getReferenceById(dto.userAccountDto().userId())).willReturn(dto.userAccountDto().toEntity());
         willDoNothing().given(articleRepository).flush();
         willDoNothing().given(hashtagService).deleteHashtagWithoutArticles(any());
@@ -258,7 +258,7 @@ class ArticleServiceTest {
                 .hasSize(1)
                 .extracting("hashtagName")
                 .containsExactly("springboot");
-        then(articleRepository).should().getReferenceById(dto.id());
+        then(articleRepository).should().findById(dto.id());
         then(userAccountRepository).should().getReferenceById(dto.userAccountDto().userId());
         then(articleRepository).should().flush();
         then(hashtagService).should(times(2)).deleteHashtagWithoutArticles(any());
@@ -272,13 +272,13 @@ class ArticleServiceTest {
     void givenNonexistentArticleInfo_whenUpdatingArticle_thenLogsWarningAndDoesNothing() {
         // Given
         ArticleDto dto = testFixture.createArticleDto("새 타이틀", "새 내용");
-        given(articleRepository.getReferenceById(dto.id())).willThrow(EntityNotFoundException.class);
+        given(articleRepository.findById(dto.id())).willThrow(EntityNotFoundException.class);
 
         // When
         sut.updateArticle(dto.id(), dto);
 
         // Then
-        then(articleRepository).should().getReferenceById(dto.id());
+        then(articleRepository).should().findById(dto.id());
         then(userAccountRepository).shouldHaveNoInteractions();
         then(hashtagService).shouldHaveNoInteractions();
     }
@@ -291,14 +291,14 @@ class ArticleServiceTest {
         Article differentArticle = testFixture.createArticle(differentArticleId);
         differentArticle.setUserAccount(testFixture.createUserAccount("John"));
         ArticleDto dto = testFixture.createArticleDto("새 타이틀", "새 내용");
-        given(articleRepository.getReferenceById(differentArticleId)).willReturn(differentArticle);
+        given(articleRepository.findById(differentArticleId)).willReturn(Optional.of(differentArticle));
         given(userAccountRepository.getReferenceById(dto.userAccountDto().userId())).willReturn(dto.userAccountDto().toEntity());
 
         // When
         sut.updateArticle(differentArticleId, dto);
 
         // Then
-        then(articleRepository).should().getReferenceById(differentArticleId);
+        then(articleRepository).should().findById(differentArticleId);
         then(userAccountRepository).should().getReferenceById(dto.userAccountDto().userId());
         then(hashtagService).shouldHaveNoInteractions();
     }
