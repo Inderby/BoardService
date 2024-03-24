@@ -32,6 +32,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth-> auth
                         .requestMatchers( PathRequest.toStaticResources().atCommonLocations()).permitAll() //정적 자원에 대한 보안 요소를 Spring Security 관리하에 두도록 한다.
+                        .requestMatchers("/api/**").permitAll()
                         .requestMatchers( HttpMethod.GET,
                                 "/"
                                 , "/articles"
@@ -39,6 +40,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated())
                 .formLogin(withDefaults())
                 .logout(logout -> logout.logoutSuccessUrl("/"))
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
                 .oauth2Login(oAuth -> oAuth
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(oAuth2UserService)
