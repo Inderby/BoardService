@@ -2,6 +2,8 @@ package com.example.boardservice.repository;
 
 import com.example.boardservice.domain.Article;
 import com.example.boardservice.domain.QArticle;
+import com.example.boardservice.domain.projection.ArticleCommentProjection;
+import com.example.boardservice.domain.projection.ArticleProjection;
 import com.example.boardservice.repository.querydsl.ArticleRepositoryCustom;
 import com.querydsl.core.types.dsl.DateTimeExpression;
 import com.querydsl.core.types.dsl.StringExpression;
@@ -15,7 +17,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 //@Repository JpaRepository의 구현체인 SimpleRepository에 이미 해당 어노테이션이 들어가 있기 때문에 붙이지 않아도 된다. 또한 어노테이션은 관습적으로 interface에 붙이지 않는다.
-@RepositoryRestResource //Spring data rest 기능을 사용하는 annotation
+@RepositoryRestResource(excerptProjection = ArticleProjection.class) //Spring data rest 기능을 사용하는 annotation
 public interface ArticleRepository extends JpaRepository<Article, Long>,
         QuerydslPredicateExecutor<Article>, //Article 안에 있는 모든 필드에 대한 기본 검색 기능을 추가해줌
         QuerydslBinderCustomizer<QArticle>, //서비스의 입맛에 맞는 검색 기능을 추가하기 위해 사용함
